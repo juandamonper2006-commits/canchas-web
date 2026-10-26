@@ -2,14 +2,20 @@
 Configuración de Django para CanchApp - Sistema de reservas de canchas sintéticas.
 Base de datos: SQLite (archivo db.sqlite3 en la raíz del proyecto).
 """
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# En un proyecto real esta clave va en una variable de entorno.
-SECRET_KEY = 'django-insecure-canchapp-ecci-taller4-cambiar-en-produccion'
-DEBUG = True
+# En local se usan estos valores por defecto. En el servidor (PythonAnywhere)
+# se definen las variables de entorno DJANGO_SECRET_KEY y DJANGO_DEBUG.
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-canchapp-ecci-taller4-solo-para-desarrollo')
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = ['*']
+
+# Necesario cuando el sitio se publica con HTTPS (PythonAnywhere, Render, etc.)
+CSRF_TRUSTED_ORIGINS = ['https://*.pythonanywhere.com', 'https://*.onrender.com']
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -68,6 +74,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # destino de "python manage.py collectstatic" en el servidor
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
