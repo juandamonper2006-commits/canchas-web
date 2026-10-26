@@ -1,0 +1,33 @@
+{% load static %}<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CanchApp · Jugador</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+  <div class="player">
+    <!-- Barra superior (en escritorio muestra el menú; en celular solo marca + campana) -->
+    <header class="p-top">
+      <div class="p-top-inner">
+        <a href="#/inicio" class="brand"><div class="brand-logo">⚽</div> CanchApp</a>
+        <nav class="p-nav-desktop" id="nav-desktop"></nav>
+        <a href="#/notificaciones" class="bell" id="bell" title="Notificaciones"></a>
+      </div>
+    </header>
+
+    <main class="p-main" id="view"></main>
+
+    <!-- Menú inferior estilo app móvil -->
+    <nav class="bottom-nav" id="nav-bottom"></nav>
+  </div>
+
+  <!-- Librería para generar el código QR del comprobante -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="{% static 'js/data.js' %}"></script>
+  <script src="{% static 'js/jugador.js' %}"></script>
+</body>
+</html>

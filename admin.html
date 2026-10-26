@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CanchApp · Panel de administración</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="admin">
+    <!-- Menú lateral fijo (siempre visible) -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><div class="brand-logo">⚽</div> CanchApp <span class="tiny" style="color:#8f89ad;font-weight:500">Admin</span></div>
+      <nav id="side-nav"></nav>
+      <div class="side-foot">
+        <div class="bold" style="color:#fff" id="who"></div>
+        <div class="tiny" style="color:#8f89ad" id="who-rol"></div>
+        <button class="btn btn-ghost btn-sm mt-s" id="salir" style="color:#d9d5ec;padding-left:0">⎋ Cerrar sesión</button>
+      </div>
+    </aside>
+
+    <main class="a-main">
+      <div class="a-top">
+        <div class="flex">
+          <button class="btn btn-ghost menu-toggle" id="menu-btn" aria-label="Menú">☰</button>
+          <div>
+            <h1 id="a-title">Dashboard</h1>
+            <div class="sub" id="a-sub"></div>
+          </div>
+        </div>
+        <div class="flex">
+          <button class="btn btn-dark" id="btn-checkin">📷 Check-in QR</button>
+        </div>
+      </div>
+      <div id="view"></div>
+    </main>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

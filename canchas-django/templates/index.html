@@ -1,0 +1,135 @@
+{% load static %}<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CanchApp · Ingresar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+  <div class="auth-page">
+    <!-- Lado izquierdo: presentación -->
+    <section class="auth-hero">
+      <div class="brand"><div class="brand-logo">⚽</div> CanchApp</div>
+      <div>
+        <h1>Reserva tu cancha sintética <span>en segundos</span>.</h1>
+        <p>Consulta la disponibilidad en tiempo real, paga el abono desde el celular y presenta tu código QR en la sede. Sin llamadas, sin cruces de horario.</p>
+        <div class="auth-feats">
+          <div class="auth-feat"><b>⏱ Tiempo real</b>Horarios libres y ocupados al instante.</div>
+          <div class="auth-feat"><b>🔒 Sin doble reserva</b>La franja se bloquea mientras pagas.</div>
+          <div class="auth-feat"><b>📲 Comprobante QR</b>Check-in rápido en la sede.</div>
+          <div class="auth-feat"><b>🔔 Recordatorios</b>WhatsApp/correo 24 h y 2 h antes.</div>
+        </div>
+      </div>
+      <small style="color:#8f89ad">Universidad ECCI · Innovación tecnológica · Taller 4</small>
+    </section>
+
+    <!-- Lado derecho: formulario -->
+    <section class="auth-side">
+      <div class="auth-box">
+        <h2 id="auth-title">¡Hola de nuevo! 👋</h2>
+        <p class="muted" id="auth-sub">Ingresa para reservar o administrar tus canchas.</p>
+
+        <div class="seg" role="tablist">
+          <button class="active" data-mode="login">Iniciar sesión</button>
+          <button data-mode="register">Crear cuenta</button>
+        </div>
+
+        <!-- Login -->
+        <form id="form-login" autocomplete="on">
+          <div class="field">
+            <label for="l-email">Correo electrónico</label>
+            <input class="input" id="l-email" type="email" placeholder="tu@correo.com" required>
+          </div>
+          <div class="field">
+            <label for="l-pass">Contraseña</label>
+            <input class="input" id="l-pass" type="password" placeholder="••••••" required>
+          </div>
+          <div class="err-msg" id="l-err"></div>
+          <button class="btn btn-primary btn-block" type="submit">Ingresar</button>
+        </form>
+
+        <!-- Registro (solo jugadores) -->
+        <form id="form-register" class="hidden">
+          <div class="field">
+            <label for="r-nombre">Nombre completo</label>
+            <input class="input" id="r-nombre" placeholder="Andrés Martínez" required>
+          </div>
+          <div class="field">
+            <label for="r-email">Correo electrónico</label>
+            <input class="input" id="r-email" type="email" placeholder="tu@correo.com" required>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="r-tel">Celular (WhatsApp)</label>
+              <input class="input" id="r-tel" placeholder="300 000 0000">
+            </div>
+            <div class="field">
+              <label for="r-pass">Contraseña</label>
+              <input class="input" id="r-pass" type="password" minlength="4" placeholder="Mín. 4 caracteres" required>
+            </div>
+          </div>
+          <div class="err-msg" id="r-err"></div>
+          <button class="btn btn-primary btn-block" type="submit">Crear cuenta de jugador</button>
+        </form>
+
+        <div class="demo-box">
+          <b>Cuentas de prueba</b> (clic para llenar):<br>
+          🧑 Jugador: <a href="#" data-demo="andres@correo.com|1234"><code>andres@correo.com</code> / <code>1234</code></a><br>
+          🛠 Administrador: <a href="#" data-demo="admin@canchas.com|admin123"><code>admin@canchas.com</code> / <code>admin123</code></a>
+        </div>
+        <p class="tiny muted mt">Los datos se guardan en la base de datos SQLite del servidor (db.sqlite3).</p>
+      </div>
+    </section>
+  </div>
+
+  <script src="{% static 'js/data.js' %}"></script>
+  <script>
+    // Si ya hay sesión abierta, ir directo a su portal
+    apiFetch('/api/estado/').then(d => { if (d.ok) location.href = Auth.paginaDe(d.estado.yo.rol); });
+
+    const fl = document.getElementById('form-login');
+    const fr = document.getElementById('form-register');
+
+    document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+      document.querySelectorAll('.seg button').forEach(x => x.classList.toggle('active', x === b));
+      const reg = b.dataset.mode === 'register';
+      fl.classList.toggle('hidden', reg);
+      fr.classList.toggle('hidden', !reg);
+      document.getElementById('auth-title').textContent = reg ? 'Crea tu cuenta ⚽' : '¡Hola de nuevo! 👋';
+      document.getElementById('auth-sub').textContent = reg ? 'Regístrate como jugador y reserva en menos de 3 pasos.' : 'Ingresa para reservar o administrar tus canchas.';
+    }));
+
+    fl.addEventListener('submit', async e => {
+      e.preventDefault();
+      const btn = fl.querySelector('button'); btn.disabled = true;
+      const d = await Auth.login(document.getElementById('l-email').value, document.getElementById('l-pass').value);
+      btn.disabled = false;
+      if (!d.ok) { document.getElementById('l-err').textContent = d.error; return; }
+      location.href = Auth.paginaDe(d.rol);
+    });
+
+    fr.addEventListener('submit', async e => {
+      e.preventDefault();
+      const d = await Auth.register({
+        nombre: document.getElementById('r-nombre').value.trim(),
+        email: document.getElementById('r-email').value.trim(),
+        telefono: document.getElementById('r-tel').value.trim(),
+        password: document.getElementById('r-pass').value,
+      });
+      if (!d.ok) { document.getElementById('r-err').textContent = d.error; return; }
+      location.href = '/jugador/';
+    });
+
+    document.querySelectorAll('[data-demo]').forEach(a => a.addEventListener('click', e => {
+      e.preventDefault();
+      const [m, p] = a.dataset.demo.split('|');
+      document.querySelector('.seg button[data-mode=login]').click();
+      document.getElementById('l-email').value = m;
+      document.getElementById('l-pass').value = p;
+    }));
+  </script>
+</body>
+</html>
